@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html style="width:100%; height:100%; overflow: auto;">
+
+<head>
+    <meta charset="utf-8">
+    <title>templates</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1">
+    <style type="text/css">
+        .demo {
+            width: 500px;
+            height: 500px;
+            margin: 50px auto;
+            background: #FFF;
+            font-size: 12px;
+            overflow: auto;
+            padding: 1px 0 0 1px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .widgets-list-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        .widgets-item {
+            width: 82px;
+            height: 80px;
+
+            border: 1px solid #EEE;
+            margin-top: -1px;
+            margin-left: -1px;
+            overflow: hidden;
+
+            position: relative;
+            z-index: 1;
+
+            cursor: pointer;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            user-select: none;
+        }
+
+        .widgets-item:hover {
+            z-index: 2;
+            border: 1px solid #199ED8;
+            background: #CCEBF8;
+        }
+
+        .widgets-item-disabled {
+            z-index: 0;
+            cursor: default;
+        }
+
+        .widgets-item-icon {
+            width: 32px;
+            height: 32px;
+            background: url(images/chart.png) no-repeat center;
+        }
+
+        .widgets-item-label {
+            padding: 3px 0;
+            text-align: center;
+
+        }
+    </style>
+</head>
+
+<body style="background:#F5F5F5">
+    <div class="demo" id="demo">
+        <div class="widgets-list-wrapper">
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+            <div class="widgets-item">
+                <span class="widgets-item-icon"></span>
+                <span class="widgets-item-label">基本图形</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
