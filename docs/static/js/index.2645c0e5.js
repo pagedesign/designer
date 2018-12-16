@@ -417,7 +417,7 @@ function (_Component) {
           console.log(1234);
         },
         drop: function drop(event, ui) {
-          console.log(ui);
+          console.log(event.pageX, event.pageY, ui);
           $(".widgets-drop-container", dom).css({
             background: "#f2f2f2",
             border: "1px dashed transparent"
@@ -643,7 +643,8 @@ function (_React$Component2) {
         },
         drag: function drag(event, ui) {
           var pageX = event.pageX;
-          var pageY = event.pageY; //在区域内
+          var pageY = event.pageY;
+          ui.test = true; //在区域内
 
           var curr = null;
           coords.forEach(function (coord) {
@@ -728,4 +729,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.77d90350.js.map
+//# sourceMappingURL=index.2645c0e5.js.map

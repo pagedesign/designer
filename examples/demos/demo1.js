@@ -82,7 +82,7 @@ export default class DEMO extends Component {
                 console.log(1234)
             },
             drop(event, ui) {
-                console.log(ui)
+                console.log(event.pageX, event.pageY, ui)
                 $(".widgets-drop-container", dom).css({
                     background: "#f2f2f2",
                     border: "1px dashed transparent",

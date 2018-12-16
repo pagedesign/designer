@@ -75,6 +75,9 @@ export default class WidgetsList extends React.Component {
             drag: function (event, ui) {
                 const pageX = event.pageX;
                 const pageY = event.pageY;
+
+                ui.test = true;
+
                 //在区域内
                 let curr = null;
                 coords.forEach(coord => {
