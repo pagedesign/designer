@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import WidgetsList from '../../src/components/WidgetsPanel/WidgetsList';
+import WidgetsList from '../../src/components/WidgetsPanel/DragWidgetsList';
 import icon from '../style/images/chart.png';
 
 const List = [
@@ -70,6 +70,7 @@ export default class DEMO extends Component {
 
         $(".widgets-drop-container", dom).droppable({
             accept: '.widgets-item',
+            scope: "widgets",
             greedy: true, //父元素不接收drop
             activate(event, ui) {
                 console.log('activate')
