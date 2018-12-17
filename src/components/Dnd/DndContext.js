@@ -12,7 +12,7 @@ export const getDefaultContext = () => ({
     dragItem: null,//当前拖拽对象
     // drop项的元素
     dropItems: [],
-    dropContainers: [],
+    dropContainers: {},
 
     addDropItem(dom) {
         this.dropItems.push(dom);
@@ -28,19 +28,22 @@ export const getDefaultContext = () => ({
         return this.dropItems;
     },
 
-    addDropContainer(dom) {
-        this.dropContainers.push(dom);
+    addDropContainer(scope, dom) {
+        this.dropContainers[scope] = this.dropContainers[scope] || [];
+        this.dropContainers[scope].push(dom);
     },
-    removeDropContainer(dom) {
-        const idx = this.dropContainers.indexOf(dom);
+    removeDropContainer(scope, dom) {
+        const cts = this.dropContainers[scope] || [];
+
+        const idx = cts.indexOf(dom);
 
         if (idx > -1) {
-            this.dropContainers.splice(idx, 1);
+            cts.splice(idx, 1);
         }
 
     },
-    getDropContainers() {
-        return this.dropContainers;
+    getDropContainers(scope = this.scope) {
+        return this.dropContainers[scope] || [];
     }
 });
 

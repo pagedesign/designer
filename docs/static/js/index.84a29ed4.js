@@ -328,7 +328,7 @@ var _chart = _interopRequireDefault(__webpack_require__(/*! ../style/images/char
 
 var _DndContext = _interopRequireWildcard(__webpack_require__(/*! ../../src/components/Dnd/DndContext */ "./src/components/Dnd/DndContext.js"));
 
-var _DropContainer = _interopRequireDefault(__webpack_require__(/*! ../../src/components/Dnd/DropContainer */ "./src/components/Dnd/DropContainer.js"));
+var _DropRowContainer = _interopRequireDefault(__webpack_require__(/*! ../../src/components/Dnd/DropRowContainer */ "./src/components/Dnd/DropRowContainer.js"));
 
 var List = [{
   icon: _chart.default,
@@ -450,7 +450,7 @@ function (_Component) {
           items: List
         });
       }), _react.default.createElement("div", null, _react.default.createElement("br", null), _react.default.createElement(_DndContext.default.Consumer, null, function (dnd) {
-        return _react.default.createElement(_DropContainer.default, {
+        return _react.default.createElement(_DropRowContainer.default, {
           dnd: dnd,
           style: {
             minHeight: 200
@@ -748,7 +748,7 @@ var getDefaultContext = function getDefaultContext() {
     //当前拖拽对象
     // drop项的元素
     dropItems: [],
-    dropContainers: [],
+    dropContainers: {},
     addDropItem: function addDropItem(dom) {
       this.dropItems.push(dom);
     },
@@ -762,18 +762,21 @@ var getDefaultContext = function getDefaultContext() {
     getDropItems: function getDropItems() {
       return this.dropItems;
     },
-    addDropContainer: function addDropContainer(dom) {
-      this.dropContainers.push(dom);
+    addDropContainer: function addDropContainer(scope, dom) {
+      this.dropContainers[scope] = this.dropContainers[scope] || [];
+      this.dropContainers[scope].push(dom);
     },
-    removeDropContainer: function removeDropContainer(dom) {
-      var idx = this.dropContainers.indexOf(dom);
+    removeDropContainer: function removeDropContainer(scope, dom) {
+      var cts = this.dropContainers[scope] || [];
+      var idx = cts.indexOf(dom);
 
       if (idx > -1) {
-        this.dropContainers.splice(idx, 1);
+        cts.splice(idx, 1);
       }
     },
     getDropContainers: function getDropContainers() {
-      return this.dropContainers;
+      var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.scope;
+      return this.dropContainers[scope] || [];
     }
   };
 };
@@ -908,8 +911,6 @@ var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-co
 
 var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectWithoutProperties */ "./node_modules/@babel/runtime-corejs2/helpers/objectWithoutProperties.js"));
 
-var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/toConsumableArray */ "./node_modules/@babel/runtime-corejs2/helpers/toConsumableArray.js"));
-
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -963,80 +964,62 @@ function (_React$Component) {
   (0, _createClass2.default)(DropContainer, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var self = this;
-      var dnd = this.props.dnd;
+      var _this$props = this.props,
+          scope = _this$props.scope,
+          dnd = _this$props.dnd,
+          onDropActivate = _this$props.onDropActivate,
+          onDrop = _this$props.onDrop,
+          onDropOver = _this$props.onDropOver,
+          onDropOut = _this$props.onDropOut,
+          onDropDeactivate = _this$props.onDropDeactivate;
 
       var dom = _reactDom.default.findDOMNode(this);
 
-      dnd.addDropContainer(dom);
+      dnd.addDropContainer(scope || dnd.scope, dom);
       $(dom).droppable({
-        scope: dnd.scope,
+        scope: scope || dnd.scope,
         activate: function activate(event, ui) {
-          var _console;
-
-          self.onDropActivate(event, ui);
-
-          (_console = console).log.apply(_console, (0, _toConsumableArray2.default)(dnd.dropContainers)); //onDropActivate(event, ui)
-
+          onDropActivate(event, ui);
         },
-        drop: function drop(event, ui) {//onDrop(event, ui)
+        drop: function drop(event, ui) {
+          onDrop(event, ui);
         },
-        over: function over(event, ui) {//onDropOver(event, ui)
+        over: function over(event, ui) {
+          onDropOver(event, ui);
         },
-        out: function out(event, ui) {//onDropOut(event, ui)
+        out: function out(event, ui) {
+          onDropOut(event, ui);
         },
-        deactivate: function deactivate(event, ui) {//onDropDeactivate(event, ui)
+        deactivate: function deactivate(event, ui) {
+          onDropDeactivate(event, ui);
         }
       });
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      var dnd = this.props.dnd;
+      var _this$props2 = this.props,
+          scope = _this$props2.scope,
+          dnd = _this$props2.dnd;
 
       var dom = _reactDom.default.findDOMNode(this);
 
       $(dom).droppable("destroy");
-      dnd.removeDropContainer(dom);
-    }
-  }, {
-    key: "onDropActivate",
-    value: function onDropActivate(event, ui) {
-      var dnd = this.props.dnd;
-      var dc = dnd.dropContainers;
-      dc.forEach(function (dom) {
-        $(dom).css({
-          border: "1px dashed #ccc",
-          background: "#f2f2f2"
-        });
-      });
-    }
-  }, {
-    key: "onDrop",
-    value: function onDrop(event, ui) {}
-  }, {
-    key: "onDropOver",
-    value: function onDropOver(event, ui) {}
-  }, {
-    key: "onDropOut",
-    value: function onDropOut(event, ui) {}
-  }, {
-    key: "onDropDeactivate",
-    value: function onDropDeactivate(event, ui) {
-      var dnd = this.props.dnd;
-      var dc = dnd.dropContainers;
-      dc.forEach(function (dom) {
-        $(dom).css({
-          background: "#f2f2f2"
-        });
-      });
+      dnd.removeDropContainer(scope || dnd.scope, dom);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$props = this.props,
-          className = _this$props.className,
-          props = (0, _objectWithoutProperties2.default)(_this$props, ["className"]);
+      var _this$props3 = this.props,
+          className = _this$props3.className,
+          scope = _this$props3.scope,
+          dnd = _this$props3.dnd,
+          onDropActivate = _this$props3.onDropActivate,
+          onDrop = _this$props3.onDrop,
+          onDropOver = _this$props3.onDropOver,
+          onDropOut = _this$props3.onDropOut,
+          onDropDeactivate = _this$props3.onDropDeactivate,
+          props = (0, _objectWithoutProperties2.default)(_this$props3, ["className", "scope", "dnd", "onDropActivate", "onDrop", "onDropOver", "onDropOut", "onDropDeactivate"]);
       var classString = (0, _classnames.default)("widgets-drop-container", className);
       return _react.default.createElement("div", (0, _extends2.default)({}, props, {
         className: classString
@@ -1048,6 +1031,131 @@ function (_React$Component) {
 
 exports.default = DropContainer;
 (0, _defineProperty2.default)(DropContainer, "defaultProps", {
+  scope: null,
+  dnd: {},
+  onDropActivate: noop,
+  onDrop: noop,
+  onDropOver: noop,
+  onDropOut: noop,
+  onDropDeactivate: noop
+});
+
+/***/ }),
+
+/***/ "./src/components/Dnd/DropRowContainer.js":
+/*!************************************************!*\
+  !*** ./src/components/Dnd/DropRowContainer.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectWithoutProperties */ "./node_modules/@babel/runtime-corejs2/helpers/objectWithoutProperties.js"));
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf3 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "./node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _DropContainer = _interopRequireDefault(__webpack_require__(/*! ./DropContainer */ "./src/components/Dnd/DropContainer.js"));
+
+/**
+ * 页面布局设计器-拖放组件容器
+ * author: nobo.zhou
+ * date: 2018.12.09
+ */
+var DropRowContainer =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(DropRowContainer, _React$Component);
+
+  function DropRowContainer() {
+    var _getPrototypeOf2;
+
+    var _this;
+
+    (0, _classCallCheck2.default)(this, DropRowContainer);
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(DropRowContainer)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropActivate", function (event, ui) {
+      var dnd = _this.props.dnd;
+      var cts = dnd.getDropContainers(dnd.scope);
+      cts.forEach(function (dom) {
+        $(dom).addClass("active");
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDrop", function (event, ui) {});
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropOver", function (event, ui) {
+      var dnd = _this.props.dnd;
+      var cts = dnd.getDropContainers(dnd.scope);
+      cts.forEach(function (dom) {
+        $(dom).addClass("enter");
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropOut", function (event, ui) {
+      var dnd = _this.props.dnd;
+      var cts = dnd.getDropContainers(dnd.scope);
+      cts.forEach(function (dom) {
+        $(dom).removeClass("enter");
+      });
+    });
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropDeactivate", function (event, ui) {
+      var dnd = _this.props.dnd;
+      var cts = dnd.getDropContainers(dnd.scope);
+      cts.forEach(function (dom) {
+        $(dom).removeClass("active");
+      });
+    });
+    return _this;
+  }
+
+  (0, _createClass2.default)(DropRowContainer, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          dnd = _this$props.dnd,
+          props = (0, _objectWithoutProperties2.default)(_this$props, ["dnd"]);
+      return _react.default.createElement(_DropContainer.default, (0, _extends2.default)({}, props, {
+        dnd: dnd,
+        onDropActivate: this.onDropActivate,
+        onDrop: this.onDrop,
+        onDropOver: this.onDropOver,
+        onDropOut: this.onDropOut,
+        onDropDeactivate: this.onDropDeactivate
+      }));
+    }
+  }]);
+  return DropRowContainer;
+}(_react.default.Component);
+
+exports.default = DropRowContainer;
+(0, _defineProperty2.default)(DropRowContainer, "defaultProps", {
   dnd: {}
 });
 
@@ -1317,12 +1425,12 @@ exports.default = WidgetsItem;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.45163a49.js.map
+//# sourceMappingURL=index.84a29ed4.js.map

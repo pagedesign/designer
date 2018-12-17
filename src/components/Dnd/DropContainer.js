@@ -11,7 +11,13 @@ const noop = () => { };
 
 export default class DropContainer extends React.Component {
     static defaultProps = {
-        dnd: {}
+        scope: null,
+        dnd: {},
+        onDropActivate: noop,
+        onDrop: noop,
+        onDropOver: noop,
+        onDropOut: noop,
+        onDropDeactivate: noop,
     };
 
     state = {
@@ -19,75 +25,60 @@ export default class DropContainer extends React.Component {
     }
 
     componentDidMount() {
-        const self = this;
-        const { dnd } = this.props;
+        const {
+            scope,
+            dnd,
+            onDropActivate,
+            onDrop,
+            onDropOver,
+            onDropOut,
+            onDropDeactivate,
+        } = this.props;
 
         const dom = ReactDOM.findDOMNode(this);
 
-        dnd.addDropContainer(dom);
+        dnd.addDropContainer(scope || dnd.scope, dom);
 
         $(dom).droppable({
-            scope: dnd.scope,
+            scope: scope || dnd.scope,
             activate(event, ui) {
-                self.onDropActivate(event, ui)
-                console.log(...dnd.dropContainers)
-                //onDropActivate(event, ui)
+                onDropActivate(event, ui)
             },
             drop(event, ui) {
-                //onDrop(event, ui)
+                onDrop(event, ui)
             },
             over(event, ui) {
-                //onDropOver(event, ui)
+                onDropOver(event, ui)
             },
             out(event, ui) {
-                //onDropOut(event, ui)
+                onDropOut(event, ui)
             },
             deactivate(event, ui) {
-                //onDropDeactivate(event, ui)
+                onDropDeactivate(event, ui)
             },
         });
 
     }
 
     componentWillUnmount() {
-        const { dnd } = this.props;
+        const { scope, dnd } = this.props;
         const dom = ReactDOM.findDOMNode(this);
         $(dom).droppable("destroy");
-        dnd.removeDropContainer(dom);
-    }
-
-    onDropActivate(event, ui) {
-        const { dnd } = this.props;
-        const dc = dnd.dropContainers;
-
-        dc.forEach(dom => {
-            $(dom).css({
-                border: "1px dashed #ccc",
-                background: "#f2f2f2"
-            });
-        });
-    }
-
-    onDrop(event, ui) { }
-
-    onDropOver(event, ui) { }
-
-    onDropOut(event, ui) { }
-
-    onDropDeactivate(event, ui) {
-        const { dnd } = this.props;
-        const dc = dnd.dropContainers;
-
-        dc.forEach(dom => {
-            $(dom).css({
-                background: "#f2f2f2",
-            });
-        });
-
+        dnd.removeDropContainer(scope || dnd.scope, dom);
     }
 
     render() {
-        const { className, ...props } = this.props;
+        const {
+            className,
+            scope,
+            dnd,
+            onDropActivate,
+            onDrop,
+            onDropOver,
+            onDropOut,
+            onDropDeactivate,
+            ...props
+        } = this.props;
 
         const classString = classnames("widgets-drop-container", className);
 

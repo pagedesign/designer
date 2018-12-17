@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import DragWidgetsList from '../../src/components/WidgetsPanel/DragWidgetsList';
 import icon from '../style/images/chart.png';
 import DndContext, { getDefaultContext } from '../../src/components/Dnd/DndContext';
-import DropContainer from '../../src/components/Dnd/DropContainer';
+import DropContainer from '../../src/components/Dnd/DropRowContainer';
 
 const List = [
     {

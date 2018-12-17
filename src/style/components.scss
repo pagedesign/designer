@@ -49,3 +49,9 @@ $widgets-item-height: 80px;
         }
     }
 }
+
+.widgets-drop-container {
+    &.active {
+        border: 1px dashed #ccc;
+    }
+}
