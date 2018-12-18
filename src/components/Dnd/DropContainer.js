@@ -20,13 +20,8 @@ export default class DropContainer extends React.Component {
         onDropDeactivate: noop,
     };
 
-    state = {
-        dropItems: []
-    }
-
     componentDidMount() {
         const {
-            scope,
             dnd,
             onDropActivate,
             onDrop,
@@ -37,10 +32,9 @@ export default class DropContainer extends React.Component {
 
         const dom = ReactDOM.findDOMNode(this);
 
-        dnd.addDropContainer(scope || dnd.scope, dom);
-
+        dnd.addDropContainer(dom);
         $(dom).droppable({
-            scope: scope || dnd.scope,
+            accept: '.' + dnd.dndClassName,
             activate(event, ui) {
                 onDropActivate(event, ui)
             },
@@ -61,16 +55,15 @@ export default class DropContainer extends React.Component {
     }
 
     componentWillUnmount() {
-        const { scope, dnd } = this.props;
+        const { dnd } = this.props;
         const dom = ReactDOM.findDOMNode(this);
         $(dom).droppable("destroy");
-        dnd.removeDropContainer(scope || dnd.scope, dom);
+        dnd.removeDropContainer(dom);
     }
 
     render() {
         const {
             className,
-            scope,
             dnd,
             onDropActivate,
             onDrop,

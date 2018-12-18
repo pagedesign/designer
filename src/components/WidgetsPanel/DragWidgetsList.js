@@ -19,14 +19,16 @@ export default class DragWidgetsList extends React.Component {
     }
 
     onWidgetsDragStart(item, event, ui) {
-        console.log(1)
+        const { dnd } = this.props;
+        dnd.dragItem = item;
     }
     onWidgetsDrag(item, event, ui) {
         const { dnd } = this.props;
         // console.log(dnd)
     }
     onWidgetsDragStop(item, event, ui) {
-        console.log(3)
+        const { dnd } = this.props;
+        dnd.dragItem = null;
     }
 
     render() {
@@ -39,12 +41,11 @@ export default class DragWidgetsList extends React.Component {
                         return (
                             <Drag
                                 key={i}
-                                scope={dnd.scope}
                                 onDragStart={this.onWidgetsDragStart.bind(this, item)}
                                 onDrag={this.onWidgetsDrag.bind(this, item)}
                                 onDragStop={this.onWidgetsDragStop.bind(this, item)}
                             >
-                                <WidgetsItem item={item} />
+                                <WidgetsItem className={dnd.dndClassName} item={item} />
                             </Drag>
                         );
                     })

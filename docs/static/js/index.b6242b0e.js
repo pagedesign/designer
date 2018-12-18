@@ -740,15 +740,20 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_mod
  * author: nobo.zhou
  * date: 2018.12.17
  */
+function random() {
+  return 'dnd_' + Math.random().toString(16).slice(3, 8);
+}
+
 var getDefaultContext = function getDefaultContext() {
   return {
+    dndClassName: random(),
     scope: "widgets",
     helper: null,
     dragItem: null,
     //当前拖拽对象
     // drop项的元素
     dropItems: [],
-    dropContainers: {},
+    dropContainers: [],
     addDropItem: function addDropItem(dom) {
       this.dropItems.push(dom);
     },
@@ -762,12 +767,11 @@ var getDefaultContext = function getDefaultContext() {
     getDropItems: function getDropItems() {
       return this.dropItems;
     },
-    addDropContainer: function addDropContainer(scope, dom) {
-      this.dropContainers[scope] = this.dropContainers[scope] || [];
-      this.dropContainers[scope].push(dom);
+    addDropContainer: function addDropContainer(dom) {
+      this.dropContainers.push(dom);
     },
-    removeDropContainer: function removeDropContainer(scope, dom) {
-      var cts = this.dropContainers[scope] || [];
+    removeDropContainer: function removeDropContainer(dom) {
+      var cts = this.dropContainers;
       var idx = cts.indexOf(dom);
 
       if (idx > -1) {
@@ -775,8 +779,7 @@ var getDefaultContext = function getDefaultContext() {
       }
     },
     getDropContainers: function getDropContainers() {
-      var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.scope;
-      return this.dropContainers[scope] || [];
+      return this.dropContainers;
     }
   };
 };
@@ -843,7 +846,8 @@ function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this$props = this.props,
-          scope = _this$props.scope,
+          _this$props$scope = _this$props.scope,
+          scope = _this$props$scope === void 0 ? "default" : _this$props$scope,
           onDragStart = _this$props.onDragStart,
           onDrag = _this$props.onDrag,
           onDragStop = _this$props.onDragStop;
@@ -851,8 +855,8 @@ function (_React$Component) {
       var dom = _reactDom.default.findDOMNode(this);
 
       $(dom).draggable({
-        scope: scope,
         helper: "clone",
+        addClasses: false,
         start: function start(event, ui) {
           onDragStart(event, ui);
         },
@@ -917,11 +921,9 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
 
-var _getPrototypeOf3 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
 
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
-
-var _assertThisInitialized2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/assertThisInitialized */ "./node_modules/@babel/runtime-corejs2/helpers/assertThisInitialized.js"));
 
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
 
@@ -944,28 +946,14 @@ function (_React$Component) {
   (0, _inherits2.default)(DropContainer, _React$Component);
 
   function DropContainer() {
-    var _getPrototypeOf2;
-
-    var _this;
-
     (0, _classCallCheck2.default)(this, DropContainer);
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(DropContainer)).call.apply(_getPrototypeOf2, [this].concat(args)));
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "state", {
-      dropItems: []
-    });
-    return _this;
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(DropContainer).apply(this, arguments));
   }
 
   (0, _createClass2.default)(DropContainer, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this$props = this.props,
-          scope = _this$props.scope,
           dnd = _this$props.dnd,
           onDropActivate = _this$props.onDropActivate,
           onDrop = _this$props.onDrop,
@@ -975,9 +963,9 @@ function (_React$Component) {
 
       var dom = _reactDom.default.findDOMNode(this);
 
-      dnd.addDropContainer(scope || dnd.scope, dom);
+      dnd.addDropContainer(dom);
       $(dom).droppable({
-        scope: scope || dnd.scope,
+        accept: '.' + dnd.dndClassName,
         activate: function activate(event, ui) {
           onDropActivate(event, ui);
         },
@@ -998,28 +986,25 @@ function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      var _this$props2 = this.props,
-          scope = _this$props2.scope,
-          dnd = _this$props2.dnd;
+      var dnd = this.props.dnd;
 
       var dom = _reactDom.default.findDOMNode(this);
 
       $(dom).droppable("destroy");
-      dnd.removeDropContainer(scope || dnd.scope, dom);
+      dnd.removeDropContainer(dom);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$props3 = this.props,
-          className = _this$props3.className,
-          scope = _this$props3.scope,
-          dnd = _this$props3.dnd,
-          onDropActivate = _this$props3.onDropActivate,
-          onDrop = _this$props3.onDrop,
-          onDropOver = _this$props3.onDropOver,
-          onDropOut = _this$props3.onDropOut,
-          onDropDeactivate = _this$props3.onDropDeactivate,
-          props = (0, _objectWithoutProperties2.default)(_this$props3, ["className", "scope", "dnd", "onDropActivate", "onDrop", "onDropOver", "onDropOut", "onDropDeactivate"]);
+      var _this$props2 = this.props,
+          className = _this$props2.className,
+          dnd = _this$props2.dnd,
+          onDropActivate = _this$props2.onDropActivate,
+          onDrop = _this$props2.onDrop,
+          onDropOver = _this$props2.onDropOver,
+          onDropOut = _this$props2.onDropOut,
+          onDropDeactivate = _this$props2.onDropDeactivate,
+          props = (0, _objectWithoutProperties2.default)(_this$props2, ["className", "dnd", "onDropActivate", "onDrop", "onDropOver", "onDropOut", "onDropDeactivate"]);
       var classString = (0, _classnames.default)("widgets-drop-container", className);
       return _react.default.createElement("div", (0, _extends2.default)({}, props, {
         className: classString
@@ -1033,6 +1018,101 @@ exports.default = DropContainer;
 (0, _defineProperty2.default)(DropContainer, "defaultProps", {
   scope: null,
   dnd: {},
+  onDropActivate: noop,
+  onDrop: noop,
+  onDropOver: noop,
+  onDropOut: noop,
+  onDropDeactivate: noop
+});
+
+/***/ }),
+
+/***/ "./src/components/Dnd/DropItem.js":
+/*!****************************************!*\
+  !*** ./src/components/Dnd/DropItem.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/defineProperty */ "./node_modules/@babel/runtime-corejs2/helpers/defineProperty.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _reactDom = _interopRequireDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+
+/**
+ * 页面布局设计器-拖放组件
+ * author: nobo.zhou
+ * date: 2018.12.09
+ */
+var noop = function noop() {};
+
+var Drop =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2.default)(Drop, _React$Component);
+
+  function Drop() {
+    (0, _classCallCheck2.default)(this, Drop);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(Drop).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(Drop, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this$props = this.props,
+          onDropActivate = _this$props.onDropActivate,
+          onDrop = _this$props.onDrop,
+          onDropOver = _this$props.onDropOver,
+          onDropOut = _this$props.onDropOut,
+          onDropDeactivate = _this$props.onDropDeactivate;
+
+      var dom = _reactDom.default.findDOMNode(this); //addDropItem(dom);
+
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      var dom = _reactDom.default.findDOMNode(this);
+
+      $(dom).droppable("destroy"); //removeDropItem(dom);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("div", {
+        className: "widgets-drop-item"
+      }, this.props.children);
+    }
+  }]);
+  return Drop;
+}(_react.default.Component);
+
+exports.default = Drop;
+(0, _defineProperty2.default)(Drop, "defaultProps", {
+  scope: "default",
+  addDropItem: noop,
+  removeDropItem: noop,
   onDropActivate: noop,
   onDrop: noop,
   onDropOver: noop,
@@ -1063,6 +1143,10 @@ var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-co
 
 var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectWithoutProperties */ "./node_modules/@babel/runtime-corejs2/helpers/objectWithoutProperties.js"));
 
+var _now = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/date/now */ "./node_modules/@babel/runtime-corejs2/core-js/date/now.js"));
+
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/toConsumableArray */ "./node_modules/@babel/runtime-corejs2/helpers/toConsumableArray.js"));
+
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -1080,6 +1164,8 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
 var _DropContainer = _interopRequireDefault(__webpack_require__(/*! ./DropContainer */ "./src/components/Dnd/DropContainer.js"));
+
+var _DropItem = _interopRequireDefault(__webpack_require__(/*! ./DropItem */ "./src/components/Dnd/DropItem.js"));
 
 /**
  * 页面布局设计器-拖放组件容器
@@ -1103,31 +1189,46 @@ function (_React$Component) {
     }
 
     _this = (0, _possibleConstructorReturn2.default)(this, (_getPrototypeOf2 = (0, _getPrototypeOf3.default)(DropRowContainer)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "state", {
+      dropItems: []
+    });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropActivate", function (event, ui) {
       var dnd = _this.props.dnd;
-      var cts = dnd.getDropContainers(dnd.scope);
+      var cts = dnd.getDropContainers();
       cts.forEach(function (dom) {
         $(dom).addClass("active");
       });
     });
-    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDrop", function (event, ui) {});
+    (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDrop", function (event, ui) {
+      var dnd = _this.props.dnd;
+      var current = dnd.dragItem;
+
+      _this.setState({
+        dropItems: [].concat((0, _toConsumableArray2.default)(_this.state.dropItems), [{
+          id: (0, _now.default)().toString(16),
+          label: current.label
+        }])
+      });
+
+      console.log(dnd.dragItem);
+    });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropOver", function (event, ui) {
       var dnd = _this.props.dnd;
-      var cts = dnd.getDropContainers(dnd.scope);
+      var cts = dnd.getDropContainers();
       cts.forEach(function (dom) {
         $(dom).addClass("enter");
       });
     });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropOut", function (event, ui) {
       var dnd = _this.props.dnd;
-      var cts = dnd.getDropContainers(dnd.scope);
+      var cts = dnd.getDropContainers();
       cts.forEach(function (dom) {
         $(dom).removeClass("enter");
       });
     });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropDeactivate", function (event, ui) {
       var dnd = _this.props.dnd;
-      var cts = dnd.getDropContainers(dnd.scope);
+      var cts = dnd.getDropContainers();
       cts.forEach(function (dom) {
         $(dom).removeClass("active");
       });
@@ -1141,6 +1242,7 @@ function (_React$Component) {
       var _this$props = this.props,
           dnd = _this$props.dnd,
           props = (0, _objectWithoutProperties2.default)(_this$props, ["dnd"]);
+      var dropItems = this.state.dropItems;
       return _react.default.createElement(_DropContainer.default, (0, _extends2.default)({}, props, {
         dnd: dnd,
         onDropActivate: this.onDropActivate,
@@ -1148,6 +1250,10 @@ function (_React$Component) {
         onDropOver: this.onDropOver,
         onDropOut: this.onDropOut,
         onDropDeactivate: this.onDropDeactivate
+      }), dropItems.map(function (item) {
+        return _react.default.createElement(_DropItem.default, {
+          key: item.id
+        }, item.label);
       }));
     }
   }]);
@@ -1213,7 +1319,8 @@ function (_React$Component) {
   (0, _createClass2.default)(DragWidgetsList, [{
     key: "onWidgetsDragStart",
     value: function onWidgetsDragStart(item, event, ui) {
-      console.log(1);
+      var dnd = this.props.dnd;
+      dnd.dragItem = item;
     }
   }, {
     key: "onWidgetsDrag",
@@ -1223,7 +1330,8 @@ function (_React$Component) {
   }, {
     key: "onWidgetsDragStop",
     value: function onWidgetsDragStop(item, event, ui) {
-      console.log(3);
+      var dnd = this.props.dnd;
+      dnd.dragItem = null;
     }
   }, {
     key: "render",
@@ -1236,11 +1344,11 @@ function (_React$Component) {
       return _react.default.createElement(_WidgetsContainer.default, null, items.map(function (item, i) {
         return _react.default.createElement(_Drag.default, {
           key: i,
-          scope: dnd.scope,
           onDragStart: _this.onWidgetsDragStart.bind(_this, item),
           onDrag: _this.onWidgetsDrag.bind(_this, item),
           onDragStop: _this.onWidgetsDragStop.bind(_this, item)
         }, _react.default.createElement(_WidgetsItem.default, {
+          className: dnd.dndClassName,
           item: item
         }));
       }));
@@ -1433,4 +1541,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.84a29ed4.js.map
+//# sourceMappingURL=index.b6242b0e.js.map

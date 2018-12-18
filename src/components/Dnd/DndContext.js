@@ -6,13 +6,18 @@
 
 import React from 'react';
 
+function random() {
+    return 'dnd_' + Math.random().toString(16).slice(3, 8);
+}
+
 export const getDefaultContext = () => ({
+    dndClassName: random(),
     scope: "widgets",
     helper: null,
     dragItem: null,//当前拖拽对象
     // drop项的元素
     dropItems: [],
-    dropContainers: {},
+    dropContainers: [],
 
     addDropItem(dom) {
         this.dropItems.push(dom);
@@ -28,12 +33,11 @@ export const getDefaultContext = () => ({
         return this.dropItems;
     },
 
-    addDropContainer(scope, dom) {
-        this.dropContainers[scope] = this.dropContainers[scope] || [];
-        this.dropContainers[scope].push(dom);
+    addDropContainer(dom) {
+        this.dropContainers.push(dom);
     },
-    removeDropContainer(scope, dom) {
-        const cts = this.dropContainers[scope] || [];
+    removeDropContainer(dom) {
+        const cts = this.dropContainers;
 
         const idx = cts.indexOf(dom);
 
@@ -42,8 +46,8 @@ export const getDefaultContext = () => ({
         }
 
     },
-    getDropContainers(scope = this.scope) {
-        return this.dropContainers[scope] || [];
+    getDropContainers() {
+        return this.dropContainers;
     }
 });
 

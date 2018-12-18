@@ -20,7 +20,7 @@ export default class Drag extends React.Component {
 
     componentDidMount() {
         const {
-            scope,
+            scope = "default",
             onDragStart,
             onDrag,
             onDragStop,
@@ -29,8 +29,8 @@ export default class Drag extends React.Component {
         const dom = ReactDOM.findDOMNode(this);
 
         $(dom).draggable({
-            scope,
             helper: "clone",
+            addClasses: false,
             start: function (event, ui) {
                 onDragStart(event, ui)
             },

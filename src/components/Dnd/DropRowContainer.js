@@ -6,6 +6,7 @@
 
 import React from 'react';
 import DropContainer from './DropContainer';
+import DropItem from './DropItem';
 
 export default class DropRowContainer extends React.Component {
 
@@ -13,10 +14,13 @@ export default class DropRowContainer extends React.Component {
         dnd: {}
     }
 
+    state = {
+        dropItems: []
+    }
+
     onDropActivate = (event, ui) => {
         const { dnd } = this.props;
-        const cts = dnd.getDropContainers(dnd.scope);
-
+        const cts = dnd.getDropContainers();
         cts.forEach(dom => {
             $(dom).addClass("active");
         });
@@ -24,12 +28,22 @@ export default class DropRowContainer extends React.Component {
     }
 
     onDrop = (event, ui) => {
+        const { dnd } = this.props;
+        const current = dnd.dragItem;
 
+        this.setState({
+            dropItems: [...this.state.dropItems, {
+                id: Date.now().toString(16),
+                label: current.label
+            }]
+        });
+
+        console.log(dnd.dragItem)
     }
 
     onDropOver = (event, ui) => {
         const { dnd } = this.props;
-        const cts = dnd.getDropContainers(dnd.scope);
+        const cts = dnd.getDropContainers();
 
         cts.forEach(dom => {
             $(dom).addClass("enter");
@@ -38,7 +52,7 @@ export default class DropRowContainer extends React.Component {
 
     onDropOut = (event, ui) => {
         const { dnd } = this.props;
-        const cts = dnd.getDropContainers(dnd.scope);
+        const cts = dnd.getDropContainers();
 
         cts.forEach(dom => {
             $(dom).removeClass("enter");
@@ -47,7 +61,7 @@ export default class DropRowContainer extends React.Component {
 
     onDropDeactivate = (event, ui) => {
         const { dnd } = this.props;
-        const cts = dnd.getDropContainers(dnd.scope);
+        const cts = dnd.getDropContainers();
 
         cts.forEach(dom => {
             $(dom).removeClass("active");
@@ -57,6 +71,7 @@ export default class DropRowContainer extends React.Component {
 
     render() {
         const { dnd, ...props } = this.props;
+        const { dropItems } = this.state;
 
         return (
             <DropContainer
@@ -67,7 +82,17 @@ export default class DropRowContainer extends React.Component {
                 onDropOver={this.onDropOver}
                 onDropOut={this.onDropOut}
                 onDropDeactivate={this.onDropDeactivate}
-            />
+            >
+                {
+                    dropItems.map(item => {
+                        return (
+                            <DropItem key={item.id}>
+                                {item.label}
+                            </DropItem>
+                        );
+                    })
+                }
+            </DropContainer>
         );
     }
 }

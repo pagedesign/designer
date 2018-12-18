@@ -22,7 +22,6 @@ export default class Drop extends React.Component {
 
     componentDidMount() {
         const {
-            scope,
             onDropActivate,
             onDrop,
             onDropOver,
@@ -32,7 +31,7 @@ export default class Drop extends React.Component {
 
         const dom = ReactDOM.findDOMNode(this);
 
-        addDropItem(dom);
+        //addDropItem(dom);
 
     }
 
@@ -40,7 +39,7 @@ export default class Drop extends React.Component {
         const dom = ReactDOM.findDOMNode(this);
         $(dom).droppable("destroy");
 
-        removeDropItem(dom);
+        //removeDropItem(dom);
     }
 
     render() {
