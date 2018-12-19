@@ -746,11 +746,13 @@ function random() {
 
 var getDefaultContext = function getDefaultContext() {
   return {
+    helperAppendTo: document.body,
     dndClassName: random(),
     scope: "widgets",
     helper: null,
     dragItem: null,
     //当前拖拽对象
+    dropData: null,
     // drop项的元素
     dropItems: [],
     dropContainers: [],
@@ -758,7 +760,9 @@ var getDefaultContext = function getDefaultContext() {
       this.dropItems.push(dom);
     },
     removeDropItem: function removeDropItem(dom) {
-      var idx = this.dropItems.indexOf(dom);
+      var idx = this.dropItems.map(function (item) {
+        return item.id;
+      }).indexOf(dom);
 
       if (idx > -1) {
         this.dropItems.splice(idx, 1);
@@ -1044,6 +1048,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _now = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/core-js/date/now */ "./node_modules/@babel/runtime-corejs2/core-js/date/now.js"));
+
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/extends */ "./node_modules/@babel/runtime-corejs2/helpers/extends.js"));
+
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectWithoutProperties */ "./node_modules/@babel/runtime-corejs2/helpers/objectWithoutProperties.js"));
+
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -1059,6 +1069,8 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
 var _reactDom = _interopRequireDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
+
+var _classnames2 = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
 
 /**
  * 页面布局设计器-拖放组件
@@ -1081,28 +1093,37 @@ function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this$props = this.props,
-          onDropActivate = _this$props.onDropActivate,
-          onDrop = _this$props.onDrop,
-          onDropOver = _this$props.onDropOver,
-          onDropOut = _this$props.onDropOut,
-          onDropDeactivate = _this$props.onDropDeactivate;
-
-      var dom = _reactDom.default.findDOMNode(this); //addDropItem(dom);
-
+          dnd = _this$props.dnd,
+          layout = _this$props.layout,
+          id = _this$props.id;
+      dnd.addDropItem({
+        layout: layout,
+        id: id
+      });
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       var dom = _reactDom.default.findDOMNode(this);
 
-      $(dom).droppable("destroy"); //removeDropItem(dom);
+      dnd.removeDropItem(this.props.id);
+      $(dom).droppable("destroy");
     }
   }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", {
-        className: "widgets-drop-item"
-      }, this.props.children);
+      var _this$props2 = this.props,
+          dnd = _this$props2.dnd,
+          layout = _this$props2.layout,
+          className = _this$props2.className,
+          children = _this$props2.children,
+          props = (0, _objectWithoutProperties2.default)(_this$props2, ["dnd", "layout", "className", "children"]);
+      var classString = (0, _classnames2.default)((0, _defineProperty2.default)({
+        'widgets-drop-item': true
+      }, className, className));
+      return _react.default.createElement("div", (0, _extends2.default)({}, props, {
+        className: classString
+      }), children);
     }
   }]);
   return Drop;
@@ -1110,14 +1131,9 @@ function (_React$Component) {
 
 exports.default = Drop;
 (0, _defineProperty2.default)(Drop, "defaultProps", {
-  scope: "default",
-  addDropItem: noop,
-  removeDropItem: noop,
-  onDropActivate: noop,
-  onDrop: noop,
-  onDropOver: noop,
-  onDropOut: noop,
-  onDropDeactivate: noop
+  id: 'drop_item_' + (0, _now.default)(),
+  dnd: {},
+  layout: 'row'
 });
 
 /***/ }),
@@ -1205,12 +1221,10 @@ function (_React$Component) {
 
       _this.setState({
         dropItems: [].concat((0, _toConsumableArray2.default)(_this.state.dropItems), [{
-          id: (0, _now.default)().toString(16),
+          id: 'drop_item_' + (0, _now.default)().toString(16),
           label: current.label
         }])
       });
-
-      console.log(dnd.dragItem);
     });
     (0, _defineProperty2.default)((0, _assertThisInitialized2.default)((0, _assertThisInitialized2.default)(_this)), "onDropOver", function (event, ui) {
       var dnd = _this.props.dnd;
@@ -1252,6 +1266,9 @@ function (_React$Component) {
         onDropDeactivate: this.onDropDeactivate
       }), dropItems.map(function (item) {
         return _react.default.createElement(_DropItem.default, {
+          id: item.id,
+          dnd: dnd,
+          layout: "row",
           key: item.id
         }, item.label);
       }));
@@ -1284,6 +1301,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _objectSpread2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/objectSpread */ "./node_modules/@babel/runtime-corejs2/helpers/objectSpread.js"));
+
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
 
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
@@ -1306,6 +1325,9 @@ var _WidgetsItem = _interopRequireDefault(__webpack_require__(/*! ./WidgetsItem 
 
 var _Drag = _interopRequireDefault(__webpack_require__(/*! ../Dnd/Drag */ "./src/components/Dnd/Drag.js"));
 
+var coords = [];
+var dropPointer = null;
+
 var DragWidgetsList =
 /*#__PURE__*/
 function (_React$Component) {
@@ -1321,17 +1343,60 @@ function (_React$Component) {
     value: function onWidgetsDragStart(item, event, ui) {
       var dnd = this.props.dnd;
       dnd.dragItem = item;
+      var dropItems = dnd.getDropItems();
+
+      if (dropItems.length) {
+        dropItems.forEach(function (item) {
+          var dom = document.getElementById(item.id);
+          var pos = $(dom).offset();
+          coords.push({
+            x: pos.left,
+            y: pos.top,
+            width: dom.offsetWidth,
+            height: dom.offsetHeight,
+            item: item
+          });
+          dropPointer = $('<div class="dorp-pointer" />');
+          dropPointer.hide();
+          $(dnd.helperAppendTo).append(dropPointer);
+        });
+      }
     }
   }, {
     key: "onWidgetsDrag",
     value: function onWidgetsDrag(item, event, ui) {
-      var dnd = this.props.dnd; // console.log(dnd)
+      var dnd = this.props.dnd;
+      var pageX = event.pageX;
+      var pageY = event.pageY; //在区域内
+
+      var curr = null;
+      coords.forEach(function (coord) {
+        if (curr) return;
+
+        if (pageX >= coord.x && pageX <= coord.x + coord.width && pageY >= coord.y && pageY <= coord.y + coord.height) {
+          curr = (0, _objectSpread2.default)({}, coord, {
+            dir: pageX >= coord.x + coord.width / 2 ? 'after' : 'before'
+          });
+        }
+      });
+
+      if (curr) {
+        dropPointer.show().css({
+          height: curr.height,
+          left: curr.dir == 'before' ? curr.x : curr.x + curr.width,
+          top: curr.y
+        });
+      }
+
+      dnd.dropData = curr;
     }
   }, {
     key: "onWidgetsDragStop",
     value: function onWidgetsDragStop(item, event, ui) {
       var dnd = this.props.dnd;
       dnd.dragItem = null;
+      coords = [];
+      if (dropPointer) dropPointer.remove();
     }
   }, {
     key: "render",
@@ -1541,4 +1606,4 @@ module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.b6242b0e.js.map
+//# sourceMappingURL=index.761df9b8.js.map

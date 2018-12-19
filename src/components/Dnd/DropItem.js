@@ -6,46 +6,55 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import classnames from 'classnames';
 const noop = () => { };
 
 export default class Drop extends React.Component {
     static defaultProps = {
-        scope: "default",
-        addDropItem: noop,
-        removeDropItem: noop,
-        onDropActivate: noop,
-        onDrop: noop,
-        onDropOver: noop,
-        onDropOut: noop,
-        onDropDeactivate: noop,
+        id: 'drop_item_' + Date.now(),
+        dnd: {},
+        layout: 'row'
     };
 
     componentDidMount() {
         const {
-            onDropActivate,
-            onDrop,
-            onDropOver,
-            onDropOut,
-            onDropDeactivate
+            dnd,
+            layout,
+            id
         } = this.props;
 
-        const dom = ReactDOM.findDOMNode(this);
-
-        //addDropItem(dom);
+        dnd.addDropItem({
+            layout,
+            id,
+        });
 
     }
 
     componentWillUnmount() {
         const dom = ReactDOM.findDOMNode(this);
-        $(dom).droppable("destroy");
 
-        //removeDropItem(dom);
+        dnd.removeDropItem(this.props.id);
+
+        $(dom).droppable("destroy");
     }
 
     render() {
+        const {
+            dnd,
+            layout,
+            className,
+            children,
+            ...props
+        } = this.props;
+
+        const classString = classnames({
+            'widgets-drop-item': true,
+            [className]: className
+        })
+
         return (
-            <div className="widgets-drop-item">
-                {this.props.children}
+            <div {...props} className={classString}>
+                {children}
             </div>
         );
     }

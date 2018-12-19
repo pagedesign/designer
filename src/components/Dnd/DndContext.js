@@ -11,10 +11,12 @@ function random() {
 }
 
 export const getDefaultContext = () => ({
+    helperAppendTo: document.body,
     dndClassName: random(),
     scope: "widgets",
     helper: null,
     dragItem: null,//当前拖拽对象
+    dropData: null,
     // drop项的元素
     dropItems: [],
     dropContainers: [],
@@ -23,7 +25,7 @@ export const getDefaultContext = () => ({
         this.dropItems.push(dom);
     },
     removeDropItem(dom) {
-        const idx = this.dropItems.indexOf(dom);
+        const idx = this.dropItems.map(item => item.id).indexOf(dom);
 
         if (idx > -1) {
             this.dropItems.splice(idx, 1);

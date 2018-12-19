@@ -33,12 +33,11 @@ export default class DropRowContainer extends React.Component {
 
         this.setState({
             dropItems: [...this.state.dropItems, {
-                id: Date.now().toString(16),
+                id: 'drop_item_' + Date.now().toString(16),
                 label: current.label
             }]
         });
 
-        console.log(dnd.dragItem)
     }
 
     onDropOver = (event, ui) => {
@@ -86,7 +85,7 @@ export default class DropRowContainer extends React.Component {
                 {
                     dropItems.map(item => {
                         return (
-                            <DropItem key={item.id}>
+                            <DropItem id={item.id} dnd={dnd} layout="row" key={item.id}>
                                 {item.label}
                             </DropItem>
                         );
