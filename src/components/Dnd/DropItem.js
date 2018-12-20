@@ -31,6 +31,7 @@ export default class Drop extends React.Component {
     }
 
     componentWillUnmount() {
+        const dnd = this.props.dnd;
         const dom = ReactDOM.findDOMNode(this);
 
         dnd.removeDropItem(this.props.id);

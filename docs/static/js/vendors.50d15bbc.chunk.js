@@ -25402,6 +25402,17 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/react-widget-layout/lib/style/index.css":
+/*!**************************************************************!*\
+  !*** ./node_modules/react-widget-layout/lib/style/index.css ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "./node_modules/react/cjs/react.development.js":
 /*!*****************************************************!*\
   !*** ./node_modules/react/cjs/react.development.js ***!
@@ -28950,4 +28961,4 @@ if (!self.fetch) {
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors.ac29e396.chunk.js.map
+//# sourceMappingURL=vendors.50d15bbc.chunk.js.map

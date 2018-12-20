@@ -269,7 +269,8 @@ var _demo = _interopRequireDefault(__webpack_require__(/*! ./demos/demo1 */ "./e
 
 var _Demo = _interopRequireDefault(__webpack_require__(/*! ./demos/Demo2 */ "./examples/demos/Demo2.js"));
 
-// import Demo3 from './demos/Demo3';
+var _Demo2 = _interopRequireDefault(__webpack_require__(/*! ./demos/Demo3 */ "./examples/demos/Demo3.js"));
+
 // import Demo4 from './demos/Demo4';
 var _default = [// {
 //     label: '基本功能',
@@ -278,6 +279,9 @@ var _default = [// {
 {
   label: '基本功能',
   component: _Demo.default
+}, {
+  label: '布局',
+  component: _Demo2.default
 }];
 exports.default = _default;
 
@@ -467,6 +471,62 @@ function (_Component) {
           }) : null);
         }));
       }))));
+    }
+  }]);
+  return DEMO;
+}(_react.Component);
+
+exports.default = DEMO;
+
+/***/ }),
+
+/***/ "./examples/demos/Demo3.js":
+/*!*********************************!*\
+  !*** ./examples/demos/Demo3.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireWildcard.js");
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/classCallCheck */ "./node_modules/@babel/runtime-corejs2/helpers/classCallCheck.js"));
+
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/createClass */ "./node_modules/@babel/runtime-corejs2/helpers/createClass.js"));
+
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime-corejs2/helpers/possibleConstructorReturn.js"));
+
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/getPrototypeOf */ "./node_modules/@babel/runtime-corejs2/helpers/getPrototypeOf.js"));
+
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime-corejs2/helpers/inherits */ "./node_modules/@babel/runtime-corejs2/helpers/inherits.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _src = _interopRequireDefault(__webpack_require__(/*! ../../src */ "./src/index.js"));
+
+var DEMO =
+/*#__PURE__*/
+function (_Component) {
+  (0, _inherits2.default)(DEMO, _Component);
+
+  function DEMO() {
+    (0, _classCallCheck2.default)(this, DEMO);
+    return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(DEMO).apply(this, arguments));
+  }
+
+  (0, _createClass2.default)(DEMO, [{
+    key: "render",
+    value: function render() {
+      return _react.default.createElement(_src.default, null);
     }
   }]);
   return DEMO;
@@ -850,8 +910,7 @@ function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       var _this$props = this.props,
-          _this$props$scope = _this$props.scope,
-          scope = _this$props$scope === void 0 ? "default" : _this$props$scope,
+          scope = _this$props.scope,
           onDragStart = _this$props.onDragStart,
           onDrag = _this$props.onDrag,
           onDragStop = _this$props.onDragStop;
@@ -859,6 +918,7 @@ function (_React$Component) {
       var dom = _reactDom.default.findDOMNode(this);
 
       $(dom).draggable({
+        scope: scope,
         helper: "clone",
         addClasses: false,
         start: function start(event, ui) {
@@ -871,6 +931,15 @@ function (_React$Component) {
           onDragStop(event, ui);
         }
       });
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      var scope = this.props.scope;
+
+      var dom = _reactDom.default.findDOMNode(this);
+
+      $(dom).draggable("option", "scope", scope);
     }
   }, {
     key: "componentWillUnmount",
@@ -1104,6 +1173,8 @@ function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
+      var dnd = this.props.dnd;
+
       var dom = _reactDom.default.findDOMNode(this);
 
       dnd.removeDropItem(this.props.id);
@@ -1580,6 +1651,75 @@ exports.default = WidgetsItem;
 
 /***/ }),
 
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime-corejs2/helpers/interopRequireDefault */ "./node_modules/@babel/runtime-corejs2/helpers/interopRequireDefault.js");
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+__webpack_require__(/*! react-widget-layout/lib/style/index.css */ "./node_modules/react-widget-layout/lib/style/index.css");
+
+__webpack_require__(/*! ./style/index.scss */ "./src/style/index.scss");
+
+var _layout = _interopRequireDefault(__webpack_require__(/*! ./layout */ "./src/layout.js"));
+
+var _default = _layout.default;
+exports.default = _default;
+
+/***/ }),
+
+/***/ "./src/layout.js":
+/*!***********************!*\
+  !*** ./src/layout.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var data = {
+  layout: {
+    cond: [{
+      id: 'w_x1'
+    }, {
+      id: 'w_x2'
+    }],
+    rows: [{
+      id: 'a',
+      children: [{
+        id: 'b1'
+      }, {
+        id: 'b2'
+      }, {
+        id: 'b3'
+      }]
+    }],
+    components: {
+      "a": {},
+      "b1": {},
+      "b2": {},
+      "b3": {}
+    },
+    "datasource": {
+      id: "..."
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/style/index.scss":
 /*!******************************!*\
   !*** ./src/style/index.scss ***!
@@ -1598,12 +1738,12 @@ exports.default = WidgetsItem;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
-__webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
-module.exports = __webpack_require__(/*! D:\wamp\www\github-projects\pagedesign\designer\examples\index.js */"./examples/index.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\node_modules\packez\lib\fetchPolyfills.js */"./node_modules/packez/lib/fetchPolyfills.js");
+__webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\node_modules\packez\lib\polyfills.js */"./node_modules/packez/lib/polyfills.js");
+module.exports = __webpack_require__(/*! D:\wamp64\www\github-project\pagedesign\designer\examples\index.js */"./examples/index.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.761df9b8.js.map
+//# sourceMappingURL=index.e88a1d00.js.map
