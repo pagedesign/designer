@@ -7,11 +7,14 @@
 import React from 'react';
 import DropContainer from './DropContainer';
 import DropItem from './DropItem';
+import Drag from './Drag';
+import LayoutContext from '../LayoutContext';
 
 export default class DropRowContainer extends React.Component {
 
     static defaultProps = {
-        dnd: {}
+        dnd: {},
+        accept: '*'
     }
 
     state = {
@@ -19,11 +22,6 @@ export default class DropRowContainer extends React.Component {
     }
 
     onDropActivate = (event, ui) => {
-        const { dnd } = this.props;
-        const cts = dnd.getDropContainers();
-        cts.forEach(dom => {
-            $(dom).addClass("active");
-        });
 
     }
 
@@ -32,66 +30,64 @@ export default class DropRowContainer extends React.Component {
         const current = dnd.dragItem;
 
         this.setState({
-            dropItems: [...this.state.dropItems, {
-                id: 'drop_item_' + Date.now().toString(16),
-                label: current.label
-            }]
+            dropItems: [
+                ...this.state.dropItems, {
+                    id: 'drop_item_' + Date.now().toString(16),
+                    label: current.label
+                }
+            ]
         });
 
     }
 
     onDropOver = (event, ui) => {
-        const { dnd } = this.props;
-        const cts = dnd.getDropContainers();
-
-        cts.forEach(dom => {
-            $(dom).addClass("enter");
-        });
     }
 
     onDropOut = (event, ui) => {
-        const { dnd } = this.props;
-        const cts = dnd.getDropContainers();
-
-        cts.forEach(dom => {
-            $(dom).removeClass("enter");
-        });
     }
 
     onDropDeactivate = (event, ui) => {
-        const { dnd } = this.props;
-        const cts = dnd.getDropContainers();
-
-        cts.forEach(dom => {
-            $(dom).removeClass("active");
-        });
     }
 
 
     render() {
-        const { dnd, ...props } = this.props;
+        const { dnd, accept, ...props } = this.props;
         const { dropItems } = this.state;
 
         return (
-            <DropContainer
-                {...props}
-                dnd={dnd}
-                onDropActivate={this.onDropActivate}
-                onDrop={this.onDrop}
-                onDropOver={this.onDropOver}
-                onDropOut={this.onDropOut}
-                onDropDeactivate={this.onDropDeactivate}
-            >
+            <LayoutContext.Consumer>
                 {
-                    dropItems.map(item => {
-                        return (
-                            <DropItem id={item.id} dnd={dnd} layout="row" key={item.id}>
-                                {item.label}
-                            </DropItem>
-                        );
-                    })
+                    (store) => (
+                        <DropContainer
+                            {...props}
+                            accept={accept}
+                            dnd={dnd}
+                            onDropActivate={this.onDropActivate}
+                            onDrop={this.onDrop}
+                            onDropOver={this.onDropOver}
+                            onDropOut={this.onDropOut}
+                            onDropDeactivate={this.onDropDeactivate}
+                        >
+                            {
+                                dropItems.map(item => {
+                                    return (
+                                        <Drag key={item.id}>
+                                            <DropItem
+                                                id={item.id}
+                                                dnd={dnd}
+                                                layout="row"
+                                            >
+                                                {item.label}
+                                            </DropItem>
+                                        </Drag>
+                                    );
+                                })
+                            }
+                        </DropContainer>
+                    )
                 }
-            </DropContainer>
+
+            </LayoutContext.Consumer>
         );
     }
 }

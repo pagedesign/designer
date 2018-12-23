@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import WidgetsList from '../../src/components/WidgetsPanel/DragWidgetsList';
+import WidgetsList from '../../src/components/DragWidgetsPanel';
 import icon from '../style/images/chart.png';
 
 const List = [

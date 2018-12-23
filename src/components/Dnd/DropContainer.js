@@ -11,7 +11,7 @@ const noop = () => { };
 
 export default class DropContainer extends React.Component {
     static defaultProps = {
-        scope: null,
+        accept: '*',
         dnd: {},
         onDropActivate: noop,
         onDrop: noop,
@@ -23,47 +23,130 @@ export default class DropContainer extends React.Component {
     componentDidMount() {
         const {
             dnd,
-            onDropActivate,
-            onDrop,
-            onDropOver,
-            onDropOut,
-            onDropDeactivate,
         } = this.props;
 
         const dom = ReactDOM.findDOMNode(this);
 
-        dnd.addDropContainer(dom);
+        //dnd.addDropContainer(dom);
+
         $(dom).droppable({
-            accept: '.' + dnd.dndClassName,
-            activate(event, ui) {
-                onDropActivate(event, ui)
-            },
-            drop(event, ui) {
-                onDrop(event, ui)
-            },
-            over(event, ui) {
-                onDropOver(event, ui)
-            },
-            out(event, ui) {
-                onDropOut(event, ui)
-            },
-            deactivate(event, ui) {
-                onDropDeactivate(event, ui)
-            },
+            //scope,
+            // accept: '.' + dnd.dndClassName,
+            accept: this.isAccept,
+            activeClass: false,
+            addClasses: false,
+            activate: this.onDropActivate,
+            drop: this.onDrop,
+            over: this.onDropOver,
+            out: this.onDropOut,
+            deactivate: this.onDropDeactivate,
         });
 
+    }
+
+    isAccept = () => {
+        const { accept, dnd } = this.props;
+
+        if (accept === '*') return true;
+
+        const accepts = accept.split(',');
+
+        if (accepts.indexOf(dnd.currentDndScope) > -1) {
+            return true;
+        }
+
+        return false;
+    }
+
+    onDropActivate = (event, ui) => {
+        const {
+            onDropActivate
+        } = this.props;
+
+        const dom = ReactDOM.findDOMNode(this);
+
+        if (this.isAccept()) {
+            $(dom).addClass("active");
+        }
+
+
+        if (onDropActivate) {
+            onDropActivate(event, ui);
+        }
+    }
+
+    onDrop = (event, ui) => {
+        const {
+            onDrop
+        } = this.props;
+
+        if (onDrop) {
+            onDrop(event, ui);
+        }
+    }
+
+    onDropOver = (event, ui) => {
+        const {
+            onDropOver
+        } = this.props;
+
+        const dom = ReactDOM.findDOMNode(this);
+
+        if (this.isAccept()) {
+            $(dom).addClass("enter");
+        }
+
+
+        if (onDropOver) {
+            onDropOver(event, ui);
+        }
+    }
+
+    onDropOut = (event, ui) => {
+        const {
+            onDropOut
+        } = this.props;
+
+        const dom = ReactDOM.findDOMNode(this);
+
+        if (this.isAccept()) {
+            $(dom).removeClass("enter");
+        }
+
+
+        if (onDropOut) {
+            onDropOut(event, ui);
+        }
+    }
+
+    onDropDeactivate = (event, ui) => {
+        const {
+            onDropDeactivate
+        } = this.props;
+
+        const dom = ReactDOM.findDOMNode(this);
+
+        if (this.isAccept()) {
+            $(dom).removeClass("active");
+        }
+
+
+        if (onDropDeactivate) {
+            onDropDeactivate(event, ui);
+        }
     }
 
     componentWillUnmount() {
         const { dnd } = this.props;
         const dom = ReactDOM.findDOMNode(this);
         $(dom).droppable("destroy");
-        dnd.removeDropContainer(dom);
+        //dnd.removeDropContainer(dom);
     }
 
     render() {
         const {
             className,
+            accept,
             dnd,
             onDropActivate,
             onDrop,

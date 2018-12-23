@@ -12,7 +12,6 @@ const noop = () => { };
 export default class Drag extends React.Component {
 
     static defaultProps = {
-        scope: "default",
         onDragStart: noop,
         onDrag: noop,
         onDragStop: noop,
@@ -20,7 +19,6 @@ export default class Drag extends React.Component {
 
     componentDidMount() {
         const {
-            scope,
             onDragStart,
             onDrag,
             onDragStop,
@@ -29,30 +27,23 @@ export default class Drag extends React.Component {
         const dom = ReactDOM.findDOMNode(this);
 
         $(dom).draggable({
-            scope,
             helper: "clone",
             addClasses: false,
-            start: function (event, ui) {
-                onDragStart(event, ui)
-            },
-            drag: function (event, ui) {
-                onDrag(event, ui)
-            },
-            stop(event, ui) {
-                onDragStop(event, ui)
-            }
+            start: this.onDragStart,
+            drag: this.onDrag,
+            stop: this.onDragStop
         });
 
     }
 
-    componentDidUpdate() {
-        const {
-            scope,
-        } = this.props;
+    onDragStart = (event, ui) => {
 
-        const dom = ReactDOM.findDOMNode(this);
+    }
+    onDrag = (event, ui) => {
 
-        $(dom).draggable("option", "scope", scope);
+    }
+    onDragStop = (event, ui) => {
+
     }
 
     componentWillUnmount() {

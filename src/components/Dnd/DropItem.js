@@ -36,7 +36,7 @@ export default class Drop extends React.Component {
 
         dnd.removeDropItem(this.props.id);
 
-        $(dom).droppable("destroy");
+        //  $(dom).droppable("destroy");
     }
 
     render() {
