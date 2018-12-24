@@ -1,0 +1,29 @@
+
+.rw-layout {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex: auto;
+      flex: auto;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box; }
+  .rw-layout * {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box; }
+  .rw-layout.rw-layout-has-sider {
+    -ms-flex-direction: row;
+        flex-direction: row; }
+
+.rw-layout-sider,
+.rw-layout-header,
+.rw-layout-footer {
+  -ms-flex: 0 0 auto;
+      flex: 0 0 auto; }
+
+.rw-layout-content {
+  -ms-flex: auto;
+      flex: auto; }
+
+
+/*# sourceMappingURL=vendors.43285b61.css.map*/
